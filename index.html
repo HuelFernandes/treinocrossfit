@@ -1,18 +1,619 @@
 <!DOCTYPE html>
-<html lang="en" style="background: var(--bg-primary);">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CrossFit 12 Sem">
+<title>CrossFit 12 Semanas</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  
+  /* ── CSS Variables for Light Mode (default) ── */
+  :root {
+    --bg-primary: #F5F5F3;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #EEEEE8;
+    --text-primary: #1C1C1A;
+    --text-secondary: #5F5E5A;
+    --text-tertiary: #888780;
+    --border-color: #D3D1C7;
+    --header-bg: #1C1C1A;
+    --header-text: #FFFFFF;
+    --card-shadow: rgba(0,0,0,0.04);
+    --exercise-link: #0066CC;
+    --exercise-link-hover: #004C99;
+    
+    /* Phase colors - light mode */
+    --phase1-bg: #E1F5EE;
+    --phase1-text: #085041;
+    --phase2-bg: #EEEDFE;
+    --phase2-text: #26215C;
+    --phase3-bg: #FAECE7;
+    --phase3-text: #4A1B0C;
+    
+    /* Block accent colors */
+    --warmup-dot: #1D9E75;
+    --skill-bg: #F5F4FE;
+    --skill-text: #3C3489;
+    --skill-label: #7F77DD;
+    --skill-value: #26215C;
+    --wod-dot: #EF9F27;
+    --wod-chip-bg: #FFF8EE;
+    --wod-chip-text: #854F0B;
+    --tip-bg: #FFFBF5;
+    --tip-text: #6B4709;
+    
+    /* Week active state */
+    --week-active-bg: #E6F1FB;
+    --week-active-border: #378ADD;
+    --week-active-text: #185FA5;
+    
+    /* Test badge */
+    --test-badge-bg: #FAECE7;
+    --test-badge-text: #993C1D;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #000000;
+      --bg-secondary: #1C1C1A;
+      --bg-tertiary: #2C2C2A;
+      --text-primary: #F5F5F3;
+      --text-secondary: #B4B2A9;
+      --text-tertiary: #888780;
+      --border-color: #3A3A38;
+      --header-bg: #000000;
+      --header-text: #F5F5F3;
+      --card-shadow: rgba(0,0,0,0.5);
+      --exercise-link: #5B9FED;
+      --exercise-link-hover: #85B7EB;
+      
+      /* Phase colors - dark mode */
+      --phase1-bg: #0A2A20;
+      --phase1-text: #5DCAA5;
+      --phase2-bg: #1A1640;
+      --phase2-text: #AFA9EC;
+      --phase3-bg: #2C1610;
+      --phase3-text: #F5C4B3;
+      
+      /* Block accent colors - dark mode */
+      --warmup-dot: #1D9E75;
+      --skill-bg: #1A1640;
+      --skill-text: #CECBF6;
+      --skill-label: #AFA9EC;
+      --skill-value: #CECBF6;
+      --wod-dot: #EF9F27;
+      --wod-chip-bg: #2C1F0A;
+      --wod-chip-text: #FAC775;
+      --tip-bg: #2C1F0A;
+      --tip-text: #FAC775;
+      
+      /* Week active state - dark mode */
+      --week-active-bg: #0F2B3D;
+      --week-active-border: #378ADD;
+      --week-active-text: #85B7EB;
+      
+      /* Test badge - dark mode */
+      --test-badge-bg: #2C1610;
+      --test-badge-text: #F5C4B3;
+    }
+  }
+
+  body { 
+    font-family: -apple-system, 'SF Pro Text', Arial, sans-serif; 
+    background: var(--bg-primary); 
+    color: var(--text-primary); 
+    min-height: 100vh; 
+    padding-bottom: env(safe-area-inset-bottom, 20px); 
+  }
+
+  /* ── Header ── */
+  .header { 
+    background: var(--header-bg); 
+    padding: 16px 16px 12px; 
+    padding-top: calc(env(safe-area-inset-top, 0px) + 16px); 
+    position: sticky; 
+    top: 0; 
+    z-index: 100; 
+    border-bottom: 0.5px solid var(--border-color);
+  }
+  .header h1 { 
+    font-size: 17px; 
+    font-weight: 600; 
+    color: var(--header-text); 
+    letter-spacing: -0.3px; 
+  }
+
+  /* ── Phase pills (horizontal scroll) ── */
+  .ph-scroll { 
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; 
+    scrollbar-width: none; 
+    padding: 10px 16px; 
+    display: flex; 
+    gap: 8px; 
+    background: var(--header-bg); 
+    border-bottom: 0.5px solid var(--border-color);
+  }
+  .ph-scroll::-webkit-scrollbar { display: none; }
+  .ph-btn { 
+    flex-shrink: 0; 
+    padding: 8px 14px; 
+    border-radius: 20px; 
+    border: 1.5px solid transparent; 
+    font-family: inherit; 
+    font-size: 13px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: all 0.15s; 
+    white-space: nowrap; 
+  }
+
+  /* ── Focus bar ── */
+  .focus-bar { 
+    margin: 0; 
+    padding: 10px 16px; 
+    font-size: 12px; 
+    line-height: 1.55; 
+    color: var(--text-secondary); 
+    background: var(--bg-secondary); 
+    border-bottom: 0.5px solid var(--border-color); 
+  }
+
+  /* ── Week scroller ── */
+  .wk-scroll { 
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; 
+    scrollbar-width: none; 
+    padding: 10px 16px; 
+    display: flex; 
+    gap: 8px; 
+    background: var(--bg-secondary); 
+    border-bottom: 0.5px solid var(--border-color); 
+  }
+  .wk-scroll::-webkit-scrollbar { display: none; }
+  .wk-btn { 
+    flex-shrink: 0; 
+    min-width: 64px; 
+    padding: 8px 10px; 
+    border-radius: 10px; 
+    border: 1px solid var(--border-color); 
+    background: transparent; 
+    color: var(--text-secondary); 
+    font-family: inherit; 
+    font-size: 13px; 
+    font-weight: 500; 
+    cursor: pointer; 
+    text-align: center; 
+  }
+  .wk-btn.act { 
+    background: var(--week-active-bg); 
+    border-color: var(--week-active-border); 
+    color: var(--week-active-text); 
+    font-weight: 600; 
+  }
+
+  /* ── Day tabs ── */
+  .day-tabs { 
+    display: flex; 
+    background: var(--bg-secondary); 
+    border-bottom: 0.5px solid var(--border-color); 
+  }
+  .dy-btn { 
+    flex: 1; 
+    padding: 12px 8px; 
+    border: none; 
+    border-bottom: 3px solid transparent; 
+    background: transparent; 
+    color: var(--text-tertiary); 
+    font-family: inherit; 
+    font-size: 14px; 
+    font-weight: 500; 
+    cursor: pointer; 
+  }
+  .dy-btn.act { 
+    color: var(--week-active-text); 
+    border-bottom-color: var(--week-active-border); 
+    font-weight: 600; 
+  }
+
+  /* ── Content ── */
+  .content { padding: 12px 16px 32px; }
+
+  /* ── Blocks ── */
+  .blk { 
+    background: var(--bg-secondary); 
+    border-radius: 14px; 
+    padding: 14px; 
+    margin-bottom: 10px; 
+    box-shadow: 0 1px 3px var(--card-shadow); 
+    border: 0.5px solid var(--border-color);
+  }
+  .blk-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .blk-left { display: flex; align-items: center; gap: 8px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .blk-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .chip { 
+    font-size: 11px; 
+    color: var(--text-secondary); 
+    background: var(--bg-tertiary); 
+    padding: 3px 8px; 
+    border-radius: 6px; 
+    white-space: nowrap; 
+  }
+  .wchip { 
+    font-size: 11px; 
+    padding: 3px 8px; 
+    border-radius: 6px; 
+    background: var(--wod-chip-bg); 
+    color: var(--wod-chip-text); 
+    font-weight: 600; 
+    white-space: nowrap; 
+  }
+
+  /* Warm Up */
+  .wu-list { list-style: none; padding: 0; }
+  .wu-list li { 
+    font-size: 14px; 
+    color: var(--text-primary); 
+    line-height: 1.5; 
+    padding: 6px 0; 
+    border-bottom: 0.5px solid var(--border-color); 
+    display: flex; 
+    align-items: flex-start; 
+    gap: 8px; 
+  }
+  .wu-list li:last-child { border-bottom: none; }
+  .wu-list li::before { 
+    content: ''; 
+    width: 5px; 
+    height: 5px; 
+    border-radius: 50%; 
+    background: var(--warmup-dot); 
+    margin-top: 7px; 
+    flex-shrink: 0; 
+  }
+
+  /* Skill */
+  .sk-name { 
+    font-size: 15px; 
+    font-weight: 600; 
+    color: var(--skill-text); 
+    margin-bottom: 6px; 
+    line-height: 1.3; 
+  }
+  .sk-desc { 
+    font-size: 13px; 
+    color: var(--text-secondary); 
+    font-style: italic; 
+    line-height: 1.55; 
+    margin-bottom: 10px; 
+  }
+  .sk-sets-box { 
+    background: var(--skill-bg); 
+    border-radius: 8px; 
+    padding: 10px 12px; 
+  }
+  .sk-sets-label { 
+    font-size: 10px; 
+    font-weight: 700; 
+    color: var(--skill-label); 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+    margin-bottom: 3px; 
+  }
+  .sk-sets { 
+    font-size: 13px; 
+    font-weight: 600; 
+    color: var(--skill-value); 
+    line-height: 1.5; 
+  }
+
+  /* WOD */
+  .wd-format-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .wd-list { list-style: none; padding: 0; }
+  .wd-list li { 
+    font-size: 14px; 
+    color: var(--text-primary); 
+    padding: 6px 0; 
+    border-bottom: 0.5px solid var(--border-color); 
+    display: flex; 
+    align-items: flex-start; 
+    gap: 8px; 
+    line-height: 1.5; 
+  }
+  .wd-list li:last-child { border-bottom: none; }
+  .wd-list li::before { 
+    content: ''; 
+    width: 5px; 
+    height: 5px; 
+    border-radius: 50%; 
+    background: var(--wod-dot); 
+    margin-top: 7px; 
+    flex-shrink: 0; 
+  }
+  .tip { 
+    margin-top: 10px; 
+    padding: 8px 10px; 
+    background: var(--tip-bg); 
+    border-radius: 8px; 
+    font-size: 12px; 
+    color: var(--tip-text); 
+    line-height: 1.5; 
+  }
+  .tip::before { content: '💡 '; }
+
+  /* Test week banner */
+  .test-week-banner {
+    background: var(--test-badge-bg);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--test-badge-text);
+    font-weight: 500;
+  }
+
+  /* Test week badge */
+  .test-badge { 
+    display: inline-block; 
+    background: var(--test-badge-bg); 
+    color: var(--test-badge-text); 
+    font-size: 10px; 
+    font-weight: 700; 
+    padding: 2px 7px; 
+    border-radius: 5px; 
+    text-transform: uppercase; 
+    letter-spacing: 0.4px; 
+    margin-left: 6px; 
+    vertical-align: middle; 
+  }
+
+  /* Exercise links */
+  .exercise-link {
+    color: var(--exercise-link);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--exercise-link);
+    transition: all 0.15s;
+  }
+  .exercise-link:hover {
+    color: var(--exercise-link-hover);
+    border-bottom-style: solid;
+  }
+
+  /* Add to home screen hint */
+  .install-hint { 
+    margin: 10px 16px 0; 
+    padding: 10px 12px; 
+    background: var(--phase1-bg); 
+    border-radius: 10px; 
+    font-size: 12px; 
+    color: var(--phase1-text); 
+    line-height: 1.5; 
+    display: none; 
+    align-items: flex-start; 
+    gap: 8px; 
+  }
+  .install-hint.visible { display: flex; }
+  .install-hint-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .install-hint-close { 
+    margin-left: auto; 
+    font-size: 16px; 
+    cursor: pointer; 
+    color: var(--phase1-text); 
+    flex-shrink: 0; 
+    padding: 0 0 0 8px; 
+    opacity: 0.7;
+  }
+  .install-hint-close:hover { opacity: 1; }
+</style>
 </head>
 <body>
-    <script>
-        function renderCON() {
-            const container = document.createElement('div');
-            container.style.backgroundColor = '#4A1B0C'; // Updated for dark mode
-            // ... other code
-        }
-    </script>
-    <!-- rest of the HTML -->
+
+<div class="header">
+  <h1>CrossFit — 12 Semanas</h1>
+</div>
+
+<div id="install-hint" class="install-hint">
+  <span class="install-hint-icon">📌</span>
+  <span>Adicione à tela inicial para acesso rápido na academia (Safari → Compartilhar → Tela de Início).</span>
+  <span class="install-hint-close" onclick="hideInstallHint()" title="Não mostrar novamente">✕</span>
+</div>
+
+<div class="ph-scroll" id="ph-row"></div>
+<div class="focus-bar" id="focus-bar"></div>
+<div class="wk-scroll" id="wk-row"></div>
+<div class="day-tabs">
+  <button class="dy-btn act" id="b-seg" onclick="sd('seg')">Segunda</button>
+  <button class="dy-btn" id="b-qua" onclick="sd('qua')">Quarta</button>
+  <button class="dy-btn" id="b-sex" onclick="sd('sex')">Sexta</button>
+</div>
+<div class="content" id="con"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// INSTALL HINT MANAGEMENT
+// ══════════════════════════════════════════════════════════════════
+function hideInstallHint() {
+  document.getElementById('install-hint').classList.remove('visible');
+  localStorage.setItem('hideInstallHint', 'true');
+}
+
+// Show hint only if not hidden before
+if (!localStorage.getItem('hideInstallHint')) {
+  document.getElementById('install-hint').classList.add('visible');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// EXERCISE REFERENCE LINKS
+// ══════════════════════════════════════════════════════════════════
+const EXERCISE_LINKS = {
+  'hang power clean': 'https://www.youtube.com/watch?v=0aP3tgKZcHQ',
+  'power clean': 'https://www.youtube.com/watch?v=KwYJTpQ_x5A',
+  'squat clean': 'https://www.youtube.com/watch?v=PjY1rH4_MOA',
+  'clean & jerk': 'https://www.youtube.com/watch?v=PjY1rH4_MOA',
+  'clean and jerk': 'https://www.youtube.com/watch?v=PjY1rH4_MOA',
+  'split jerk': 'https://www.youtube.com/watch?v=PjY1rH4_MOA',
+  'power snatch': 'https://www.youtube.com/watch?v=mfRCJTQ64t8',
+  'hang snatch': 'https://www.youtube.com/watch?v=mfRCJTQ64t8',
+  'squat snatch': 'https://www.youtube.com/watch?v=9xQp2sldyts',
+  'hang squat snatch': 'https://www.youtube.com/watch?v=9xQp2sldyts',
+  'overhead squat': 'https://www.youtube.com/watch?v=RD_vUnqwqqI',
+  'front squat': 'https://www.youtube.com/watch?v=m4ytaCJDsTg',
+  'deadlift': 'https://www.youtube.com/watch?v=op9kVnSso6Q',
+  'toes to bar': 'https://www.youtube.com/watch?v=_03pCKOv4l4',
+  'ttb': 'https://www.youtube.com/watch?v=_03pCKOv4l4',
+  'knees to chest': 'https://www.youtube.com/watch?v=8zV5gEE4WKQ',
+  'knees-to-chest': 'https://www.youtube.com/watch?v=8zV5gEE4WKQ',
+  'chest to bar': 'https://www.youtube.com/watch?v=gZ2T91ShTBo',
+  'chest-to-bar': 'https://www.youtube.com/watch?v=gZ2T91ShTBo',
+  'bar muscle up': 'https://www.youtube.com/watch?v=NL4vGJpsMoU',
+  'bar muscle-up': 'https://www.youtube.com/watch?v=NL4vGJpsMoU',
+  'ring muscle up': 'https://www.youtube.com/watch?v=2BHs56lL6xU',
+  'kipping swing': 'https://www.youtube.com/watch?v=q7xW2FNJ3EU',
+  'hollow body': 'https://www.youtube.com/watch?v=LlDNef_Ztsc',
+  'hollow hold': 'https://www.youtube.com/watch?v=LlDNef_Ztsc',
+  'pull up': 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
+  'pull-up': 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
+  'push up': 'https://www.youtube.com/watch?v=IODxDxX7oi4',
+  'push-up': 'https://www.youtube.com/watch?v=IODxDxX7oi4',
+  'ring row': 'https://www.youtube.com/watch?v=rloXYB8M3vU',
+  'ring dip': 'https://www.youtube.com/watch?v=Vt92sKTWhKo',
+  'handstand push up': 'https://www.youtube.com/watch?v=AOlD7pxRdlY',
+  'box jump': 'https://www.youtube.com/watch?v=NBY9-kTuHEk',
+  'burpee': 'https://www.youtube.com/watch?v=TU8QYVW0gDU',
+  'wall ball': 'https://www.youtube.com/watch?v=fpUD0LTnuQg',
+  'kettlebell swing': 'https://www.youtube.com/watch?v=YSxHifyI6s8',
+  'kb swing': 'https://www.youtube.com/watch?v=YSxHifyI6s8',
+  'air squat': 'https://www.youtube.com/watch?v=C_VtOYc6j5c',
+  'goblet squat': 'https://www.youtube.com/watch?v=MeIiIdhvXT4',
+};
+
+function linkifyExercises(text) {
+  let result = text;
+  const sortedExercises = Object.keys(EXERCISE_LINKS).sort((a, b) => b.length - a.length);
+  
+  for (const exercise of sortedExercises) {
+    const url = EXERCISE_LINKS[exercise];
+    const regex = new RegExp(`\\b(${exercise})\\b`, 'gi');
+    result = result.replace(regex, (match) => {
+      return `<a href="${url}" class="exercise-link" target="_blank" rel="noopener">${match}</a>`;
+    });
+  }
+  
+  return result;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PHASE & WORKOUT DATA
+// ══════════════════════════════════════════════════════════════════
+const PH={
+  1:{l:"Fase 1 — Fundação",c:"#1D9E75",bg:"#E1F5EE",bgDark:"#0A2A20",cDark:"#5DCAA5",wks:[1,2,3,4],f:"Reestabelecer padrões motores e base aeróbica. LPO com técnica limpa. Gymnastics: hollow/arch, kipping swing, progressão para TTB. Sem 4: testes de 1RM para baseline."},
+  2:{l:"Fase 2 — Desenvolvimento",c:"#7F77DD",bg:"#EEEDFE",bgDark:"#1A1640",cDark:"#AFA9EC",wks:[5,6,7,8],f:"Aumentar intensidade e volume. LPO cycling e cargas crescentes. TTB unbroken. Progressão para bar muscle-up: strict pull-up, C2B, false grip, ring dip negativo. Sem 8: retestar 1RMs."},
+  3:{l:"Fase 3 — Performance",c:"#D85A30",bg:"#FAECE7",bgDark:"#2C1610",cDark:"#F5C4B3",wks:[9,10,11,12],f:"Cargas máximas em LPO e benchmarks de tempo. Consolidar TTB. Tentativas reais de bar muscle-up. Semana 12: PRs e chipper final de encerramento."}
+};
+
+const D={
+1:{seg:{wu:["3' airbike leve","10 hip circles / lado","10 leg swings frente/trás","10 inchworm sem flexão","10 glute bridge (pausa 2s)"],sk:{n:"Hang Power Clean — Técnica",d:"Cotovelos veloços, barra perto do corpo, posição de recepção estável. Foco total na mecânica, sem ego no peso.",s:"5 × 5 @ 60% 1RM estimado  •  descanso 90s"},wd:{f:"AMRAP 12 min",m:["10 hang power clean (50–55% 1RM)","10 box step-ups (5/lado, 50 cm)","10 burpees"],nt:"Ritmo conversacional. Consistência acima de velocidade.",cp:null}},qua:{wu:["3' airbike","10 arm circles frente/trás","10 shoulder pass-through (bastão)","10 push-up to down dog","10 cat-cow"],sk:{n:"Hollow Body + Kipping Swing",d:"Base de todo gymnastics. Hollow → arch → hollow na barra. Sem o swing correto, nada mais funciona depois.",s:"5 × (20s hollow hold no chão + 10 kipping swings na barra)  •  descanso 90s"},wd:{f:"3 rounds for time",m:["10 ring rows (corpo em prancha rígida)","10 push-ups","15 air squats","200m esteira"],nt:"Scale push-up: inclinado na barra do Smith. Foco em amplitude.",cp:"15'"}},sex:{wu:["3' esteira (caminhada rápida)","10 good morning sem peso","5 world's greatest stretch / lado","10 glute bridge","10 wrist circles"],sk:{n:"Overhead Squat — Posição e Mobilidade",d:"PVC ou barra vazia. Barra em linha com tornozelos, ombros ativos, peito erguido. Objetivo: encontrar a posição correta.",s:"5 × 5 — PVC ou barra vazia  •  pausa 2s no fundo  •  descanso 90s"},wd:{f:"21-15-9 for time",m:["Deadlift (50–60% 1RM)","Knees-to-chest na barra","Box jump 50 cm"],nt:"Deadlifts unbroken em cada rodada. Mantenha a técnica mesmo cansado.",cp:"15'"}}},
+2:{seg:{wu:["3' airbike","10 hip circles","10 leg swings","10 goblet squat leve","5 empty bar hang snatch"],sk:{n:"Power Snatch — Técnica",d:"Extensão completa antes de puxar. Cotovelos altos e externos no catch. Barra na parte baixa da coxa no início.",s:"5 × 3 @ 50–60% 1RM  •  foco técnico total  •  descanso 2'"},wd:{f:"EMOM 12 min",m:["Min 1: 5 power snatch (leve)","Min 2: 10 burpees","Min 3: 15 cals airbike"],nt:"Peso que permita 5 reps sem falha técnica. Se falhar a posição, reduza.",cp:null}},qua:{wu:["3' airbike","10 arm circles frente/trás","10 scap pull-ups na barra","10 push-up to down dog","10 hollow rocks"],sk:{n:"Kipping Knees-to-Chest → TTB (Fase 1)",d:"Extensão de quadril no swing, compressão rápida no topo. O pé vai até a barra — este é o objetivo da fase.",s:"4 × 8–10 reps (máx com boa técnica)  •  descanso 90s"},wd:{f:"AMRAP 14 min",m:["5 pull-ups (kipping)","10 push-ups","10 box jumps 50 cm","200m esteira"],nt:"Pull-ups: kipping livre. Scale para ring rows se necessário.",cp:null}},sex:{wu:["3' esteira (caminhada rápida)","10 good morning sem peso","10 RDL sem peso","10 hip circles","5 world's greatest stretch / lado"],sk:{n:"Front Squat — Rack Position",d:"Cotovelos paralelos ao chão ou acima. Barra no ombro, não nas mãos. Descida controlada, subida explosiva.",s:"5 × 5 crescente (60%→75% 1RM)  •  descanso 2'"},wd:{f:"3 rounds for time",m:["400m esteira (pace tranquilo)","15 KB swings russos (16–20 kg)","10 knees-to-chest na barra"],nt:"Manter pace consistente nas 3 voltas na esteira.",cp:"16'"}}},
+3:{seg:{wu:["3' airbike","10 hip circles","10 leg swings","5 lunge / lado","5 empty bar hang clean"],sk:{n:"Hang Clean + Split Jerk (Complexo)",d:"1 hang clean + 2 split jerk por set. No split jerk: pé da frente não ultrapassa a linha dos joelhos. Trabalhar a transição.",s:"5 × (1 clean + 2 split jerk) @ 70–75% 1RM  •  descanso 2'"},wd:{f:"4 rounds for time",m:["8 hang power clean (70% 1RM)","8 box jumps 60 cm","8 burpees","100m esteira sprint (14–16 km/h)"],nt:"Sprint na esteira: ajuste a velocidade para o seu nível de retorno.",cp:"16'"}},qua:{wu:["3' airbike","10 arm circles","10 scap pull-ups na barra","10 push-up to down dog","10 hollow rocks"],sk:{n:"Bar Activation: Scap + TTB (Fase 2)",d:"Agora o pé vai até a barra de forma consistente. Extensão → compressão → extensão. Não quebre o ritmo após o toque.",s:"5 × 6–8 TTB (ou máx c/ boa técnica)  •  descanso 2' completo"},wd:{f:"AMRAP 12 min",m:["8 TTB (scale: knees-to-chest)","12 sit-ups","10 push-ups","15 cals airbike"],nt:"Gerencie os TTB no WOD. Não force até falhar — mantenha o ritmo.",cp:null}},sex:{wu:["3' esteira","10 good morning","10 RDL sem peso","10 hip circles","5 world's greatest stretch / lado"],sk:{n:"Hang Squat Snatch (below knee)",d:"Posição de coxa / below knee. Cabeça neutra, lat engajado, extensão completa antes de puxar. Base para o snatch completo.",s:"5 × 3 @ 60–65% 1RM  •  descanso 2'"},wd:{f:"Chipper for time",m:["400m esteira","30 air squats","20 push-ups","10 pull-ups ou ring rows","5 hang squat snatch (técnico, leve)"],nt:"Movimentos encadeados. Descanse só antes do snatch se necessário.",cp:"18'"}}},
+4:{seg:{wu:["5' airbike leve","10' hip mobility deliberado","5 empty bar hang clean + jerk"],sk:{n:"Clean & Jerk — TESTE 1RM (baseline)",d:"Construa progressivamente. Este número será a referência para as semanas 8 e 12. Registre tudo.",s:"50%×5 → 65%×3 → 75%×2 → 85%×1 → 90%×1 → 95%×1 → MAX  •  Registre o resultado"},wd:{f:"AMRAP 10 min (recovery)",m:["5 air squats","5 push-ups","5 ring rows"],nt:"Recovery. Intensidade mínima após o teste.",cp:null}},qua:{wu:["5' airbike leve","10 hollow rocks","10 arch rocks","10 kipping swings na barra"],sk:{n:"TTB — TESTE Max Reps Unbroken (baseline)",d:"2 attempts. Registre (1) max unbroken e (2) total em 2 attempts. Base para comparar na semana 8.",s:"Attempt 1: max unbroken  •  descanso 3'  •  Attempt 2: max unbroken  •  Registre tudo"},wd:{f:"AMRAP 15 min (recovery)",m:["10 cals airbike (pace tranquilo)","10 sit-ups","10 push-ups"],nt:"Recovery ativo. Sem pressão de performance.",cp:null}},sex:{wu:["5' esteira (caminhada)","10' shoulder mobility deliberado","5 empty bar hang snatch"],sk:{n:"Snatch — TESTE 1RM (baseline)",d:"Mesma progressão do C&J. Este número será a referência para as semanas 8 e 12.",s:"50%×5 → 65%×3 → 75%×2 → 85%×1 → MAX  •  Registre cada tentativa acima de 85%"},wd:{f:"3 rounds for time (leve)",m:["200m esteira (pace tranquilo)","10 box jumps 50 cm","10 burpees"],nt:"Recovery ativo. Não compete com o teste do skill.",cp:"15'"}}},
+5:{seg:{wu:["3' airbike","10 hip circles","5 empty bar hang clean","5 jump rope drill","10 glute bridge"],sk:{n:"Power Clean Cycling — Touch & Go",d:"Barra não para no chão entre as reps. Controle excêntrico até abaixo do joelho, extensão completa e sobe.",s:"4 × 5 touch-and-go @ 70% 1RM  •  descanso 2'"},wd:{f:"\"Grace\" adaptado — for time",m:["30 clean & jerk (40–50% 1RM — sets de 3–5 confortáveis)"],nt:"Benchmark: registre o tempo. Peso desafiador mas gerenciável.",cp:"10'"}},qua:{wu:["3' airbike","10 scap pull-ups","10 hollow rocks","10 arch rocks","10 push-up to down dog"],sk:{n:"Strict Pull-up + Chest-to-Bar Foundation",d:"Strict pull-up com negativo de 3 segundos. C2B: foco em tocar o peito na barra — diferente do pull-up padrão.",s:"5 × 5 strict pull-up (3s negativo) + 3 × 5 C2B attempt (kipping)  •  descanso 2'"},wd:{f:"AMRAP 14 min",m:["10 TTB","15 wall balls (6–9 kg)","10 box jumps 60 cm","200m esteira"],nt:"TTB: se quebrar, continue imediatamente. Ritmo acima de velocidade.",cp:null}},sex:{wu:["3' esteira","10 OHS com PVC","10 hip circles","10 wrist circles","5 world's greatest stretch / lado"],sk:{n:"Squat Snatch — Progressão de Carga",d:"Escalonar de 60% para 75–80%. Técnica limpa obrigatória. Se a posição de recepção falhar, reduza o peso.",s:"5 × 3 escalonando (60→65→70→75→75%)  •  descanso 2'"},wd:{f:"3 rounds for time",m:["400m esteira (4'30\"–5'/km)","12 OHS (40–50% 1RM)","10 burpees"],nt:"OHS com fadiga: se travar no overhead, use barra vazia e mantenha a técnica.",cp:"16'"}}},
+6:{seg:{wu:["3' airbike","10 hip circles","10 leg swings","5 empty bar hang clean + jerk","5 box jumps de aquecimento"],sk:{n:"Clean & Jerk Complex: 1 Clean + 2 Jerk",d:"1 squat clean + 2 split jerk por set. Construir confiança no ciclo clean-jerk com carga moderada-alta.",s:"5 × (1 squat clean + 2 split jerk) @ 75–80% 1RM  •  descanso 2'30\""},wd:{f:"EMOM 16 min (4 mov × 4 rounds)",m:["Min 1: 3 squat clean @ 75%","Min 2: 10 box jumps 60 cm","Min 3: 10 burpees","Min 4: rest ativo"],nt:"Se não completar em 50s, reduza reps ou peso. Técnica não cede.",cp:null}},qua:{wu:["3' airbike","10 shoulder pass-through","10 scap pull-ups","10 kipping swings","5 TTB"],sk:{n:"TTB — Volume e Consistência",d:"Séries de 8–10 com ritmo mantido. Descanso de 90s máximo entre séries. Construir a resistência do grip.",s:"5 × 8–10 TTB  •  descanso 90s cronometrado"},wd:{f:"Death by TTB + Chipper",m:["EMOM: 1 TTB no min 1, 2 no min 2... até falhar","Após falhar: 50 pull-ups for time (kipping, particionados)"],nt:"Registre até qual minuto chegou no Death by. Cap 8' para os 50 pull-ups.",cp:null}},sex:{wu:["3' esteira","10 good morning","5 RDL leve","10 hip circles","5 world's greatest stretch / lado"],sk:{n:"Front Squat — Carga Crescente",d:"3 × 3 em 80–85%. Drive explosivo no buraco, barriga dura, cotovelos altos. Sem ceder na postura.",s:"3 × 3 @ 80–85% 1RM  •  descanso 2'30\""},wd:{f:"21-15-9 for time",m:["Front squat (55–60% 1RM)","Burpees","+ 200m esteira após cada rodada (3 × 200m total)"],nt:"Separe os front squats antes de falhar — sem técnica não conta.",cp:"15'"}}},
+7:{seg:{wu:["3' airbike","10 hip circles","5 hang snatch leve","5 box jumps de aquecimento","10 glute bridge"],sk:{n:"Hang Squat Snatch — Carga Crescente",d:"Velocidade de puxada sob a barra e profundidade do squat no catch. 5 doubles escalonados.",s:"5 × 2: 70→75→80→80→82.5% 1RM  •  descanso 2'30\""},wd:{f:"AMRAP 15 min",m:["5 hang squat snatch (60% 1RM)","10 TTB","15 wall balls (6–9 kg)","200m esteira"],nt:"Snatch deve ser gerenciável com fadiga. Se a técnica quebrar, ajuste o peso antes do próximo round.",cp:null}},qua:{wu:["3' airbike","10 scap pull-ups","10 hollow rocks","10 arch rocks","10 kipping swings"],sk:{n:"BMU Foundations: False Grip + Ring Dip Negativo",d:"False grip nas argolas + ring dip negativo de 5s. Fundação essencial para o BMU. Sem isso, o movimento vira força bruta.",s:"4 × 8 ring rows false grip + 4 × 5 ring dip negatives (5s excêntrico)  •  descanso 2'"},wd:{f:"4 rounds for time",m:["8 chest-to-bar pull-ups (scale: kipping regular)","10 push-ups","12 box jumps 60 cm","15 cals airbike"],nt:"C2B: intenção de tocar o peito. Scale: kipping normal.",cp:"16'"}},sex:{wu:["3' esteira","10 hip circles","10 wrist circles","10 shoulder pass-through","5 RDL leve"],sk:{n:"Deadlift — Potência Concêntrica",d:"Barra sobre o mediopé, lat engajado, extensão explosiva de quadril. Sem hiperestensão no topo.",s:"5 × 3 @ 80–85% 1RM  •  descanso 2'30\""},wd:{f:"Chipper for time",m:["800m esteira","40 KB swings russos (16–20 kg)","30 TTB (particionados — sets de 5–8)","20 box jumps 60 cm","10 hang squat snatch (60% 1RM)"],nt:"Gerencie os TTB em sets menores. Os últimos 10 snatch com fadiga acumulada são o teste real.",cp:"20'"}}},
+8:{seg:{wu:["5' airbike leve","10' hip mobility deliberado","5 empty bar clean complex"],sk:{n:"Clean & Jerk — RETESTE 1RM (vs. Semana 4)",d:"Mesma progressão da semana 4. Você deve sentir mais conforto em 85–90% do que antes. Registre e compare.",s:"50%×5 → 65%×3 → 75%×2 → 85%×1 → 90%×1 → 95%×1 → MAX  •  Compare com Semana 4"},wd:{f:"AMRAP 10 min (recovery)",m:["5 burpees","5 box jumps (leve, 50 cm)","5 air squats"],nt:"Recovery. Nada de intensidade após o teste.",cp:null}},qua:{wu:["5' airbike leve","10 hollow rocks","10 arch rocks","10 kipping swings"],sk:{n:"TTB Max + C2B Max — RETESTE (vs. Semana 4)",d:"Attempt 1: TTB max unbroken. Descanso 3'. Attempt 2: C2B max reps kipping. Compare TTB com semana 4.",s:"TTB max unbroken → descanso 3' → C2B max reps  •  Registre tudo"},wd:{f:"AMRAP 15 min (recovery)",m:["10 cals airbike","10 push-ups","10 sit-ups"],nt:"Recovery ativo. Sem pressão de performance.",cp:null}},sex:{wu:["5' esteira (caminhada)","10' shoulder mobility deliberado","5 empty bar hang snatch"],sk:{n:"Snatch — RETESTE 1RM (vs. Semana 4)",d:"Registre e compare. O delta entre as semanas 4 e 8 mostrará a evolução técnica real.",s:"Build to heavy single  •  Registre cada lift acima de 85%  •  Compare com Semana 4"},wd:{f:"3 rounds for time (leve)",m:["200m esteira (pace tranquilo)","10 box jumps 50 cm","10 ring rows"],nt:"Recovery. Foco na respiração e no ritmo.",cp:null}}},
+9:{seg:{wu:["3' airbike","10 hip circles","10 leg swings","5 empty bar hang clean","5 box jumps prep"],sk:{n:"Clean & Jerk — Volume + Intensidade",d:"Volume em 80%, depois single em 90%. O 90% deve sentir mais leve do que na semana 8. Se não, reduza.",s:"3 × 3 @ 80%  +  1 × 1 @ 90%  •  descanso 2'30\""},wd:{f:"\"Isabel\" adaptado — for time",m:["30 snatch (70–75% 1RM — sets de 3–5 confortáveis)"],nt:"Registre o tempo. Peso que permita ciclo consistente.",cp:"10'"}},qua:{wu:["3' airbike","10 scap pull-ups","10 hollow rocks","10 arch rocks","10 kipping swings"],sk:{n:"Bar Muscle-Up — Primeiras Tentativas na Transição",d:"Jumping BMU na barra baixa (barra na altura do quadril, pés no chão). Foco na transição: pull agressivo → cotovelo passa → dip.",s:"5 × 3–5 jumping BMU transitions  +  3 × 3 banded BMU (banda mais fina possível)  •  descanso 2'"},wd:{f:"AMRAP 14 min",m:["5 chest-to-bar pull-ups","10 TTB","15 wall balls (9 kg)","15 cals airbike"],nt:"C2B com ciclo rápido. TTB em sets de 5+ se possível.",cp:null}},sex:{wu:["3' esteira","10 OHS com PVC","10 hip circles","10 wrist circles","5 world's greatest stretch / lado"],sk:{n:"Snatch Complex: Hang Squat Snatch + OHS",d:"1 hang squat snatch + 2 OHS por set. Manter tensão no overhead entre reps do OHS sem soltar.",s:"5 × (1 HSS + 2 OHS) @ 75–80%  •  descanso 2'30\""},wd:{f:"3 rounds for time",m:["400m esteira (pace forte — 4'30\"–5')","10 OHS (50% 1RM)","10 bar-facing burpees (jump over bar)","10 box jumps 60 cm"],nt:"Bar-facing burpee: de frente para a barra, salta por cima.",cp:"18'"}}},
+10:{seg:{wu:["3' airbike","10 hip circles","5 hang clean leve","5 box jumps","empty bar clean complex progressivo"],sk:{n:"Squat Clean Complex: 2 PC + 1 SC + 1 Jerk",d:"2 power clean + 1 squat clean + 1 split jerk. Sentir e conectar a diferença entre power e squat, encadear com o jerk.",s:"5 × complex @ 75–80%  •  descanso 2'30\""},wd:{f:"EMOM 18 min (6 rounds × 3 mov)",m:["Min 1: 2 squat clean @ 80%","Min 2: 10 box jumps 60 cm","Min 3: 10 TTB"],nt:"Monitore a técnica do squat clean com a fadiga acumulada.",cp:null}},qua:{wu:["3' airbike","10 scap pull-ups","10 kipping swings","5 C2B attempts","hollow/arch drill"],sk:{n:"Bar Muscle-Up — Kipping Transition + Banded",d:"Kipping alto + puxada agressiva + transição de cotovelo rápida. Use a banda mais fina que conseguir controlar.",s:"5 × 3 banded BMU  +  3 × max C2B (foco em tocar baixo no peito)  •  descanso 2'30\""},wd:{f:"5 rounds for time",m:["5 chest-to-bar pull-ups","10 burpees","200m esteira (pace forte — 13–16 km/h)"],nt:"C2B: ciclar sem pausas longas. Burpees: ritmo constante.",cp:"18'"}},sex:{wu:["3' esteira","10 hip circles","5 RDL leve","10 glute bridge","shoulder mobility"],sk:{n:"Deadlift — Intensidade Máxima",d:"Configuração perfeita antes de cada rep. Não perca tensão entre reps no chão. Explosão concêntrica máxima.",s:"3 × 2 @ 87.5%  +  1 × 1 @ 92.5%  •  descanso 3'"},wd:{f:"21-15-9 for time",m:["Deadlift (60–65% 1RM)","Bar-facing burpees (jump over bar)","+ 100m esteira após cada rodada"],nt:"Bar-facing: de frente para a barra, pula por cima. Deadlift técnico mesmo cansado.",cp:"15'"}}},
+11:{seg:{wu:["3' airbike","10 hip circles","5 hang clean + jerk leve","5 box jumps","10 glute bridge"],sk:{n:"Clean & Jerk — Build to 2RM",d:"2 reps consecutivas no máximo possível. Força máxima, não cycling. Registro obrigatório para a semana 12.",s:"Build to 2RM  •  aquecimento progressivo  •  Registre o resultado"},wd:{f:"AMRAP 16 min",m:["3 clean & jerk @ 75% 1RM","6 TTB","9 box jumps 60 cm","200m esteira"],nt:"Triplet clássico. Mantenha ritmo constante — evite explosões no início.",cp:null}},qua:{wu:["3' airbike","10 scap pull-ups","10 kipping swings","5 C2B","hollow/arch drill"],sk:{n:"Bar Muscle-Up — Sessão de Tentativas Reais",d:"Tudo converge aqui. 5 séries com descanso 3' completo. Se chegar, o dip deve ser controlado. Se não chegar, registre o progresso.",s:"5 × 1–3 BMU attempts reais (ou negativo + transição completa)  •  descanso 3' completo"},wd:{f:"For time",m:["30 chest-to-bar pull-ups (particionados)","30 TTB (particionados)","30 wall balls (9 kg)","400m esteira (pace forte, sprint final)"],nt:"Particionado como quiser. Registre o tempo. Benchmark de gymnastics endurance.",cp:"18'"}},sex:{wu:["3' esteira","10 OHS com PVC","10 hip circles","shoulder mobility completo","5 hang snatch leve"],sk:{n:"Snatch — Build to Heavy Single (tentativa de PR)",d:"Tente superar o 1RM da semana 8. Você tem 12 minutos. Sem precipitação nos pulos de peso.",s:"Build to max  •  Registre cada lift acima de 85%"},wd:{f:"Chipper for time",m:["800m esteira","30 OHS (40–50% 1RM)","20 bar-facing burpees","10 hang squat snatch @ 75%"],nt:"OHS após 800m é o teste real de overhead stability com fadiga.",cp:"20'"}}},
+12:{seg:{wu:["5' airbike + esteira leve","10' hip + shoulder mobility completo","Empty bar clean complex progressivo"],sk:{n:"Clean & Jerk — 1RM FINAL (PR)",d:"Dia de PR. Aquecimento cuidadoso. Tente bater o 1RM da semana 8. Sem apressar os pulos de peso. Comemore cada PR.",s:"50%×5 → 65%×3 → 75%×2 → 83%×1 → 90%×1 → 95%×1 → 100%+  •  Registre e compare Sem 4 → 8 → 12"},wd:{f:"\"Christine\" adaptado — 3 rounds for time",m:["500m esteira (pace forte)","12 deadlifts (peso corporal ou próximo)","21 box jumps 60 cm"],nt:"Benchmark clássico. Mantenha o pace consistente nas 3 rounds. Registre o tempo final.",cp:"20'"}},qua:{wu:["3' airbike","10 hollow rocks","10 arch rocks","10 kipping swings","5 C2B + tentativa BMU aquecimento"],sk:{n:"Bar Muscle-Up — Sessão Final + TTB Unbroken",d:"Última sessão de BMU: 5 séries de attempts reais. Depois: TTB unbroken para fechar o plano com chave.",s:"5 × 1–3 BMU attempts reais (descanso 3')  →  5 × 3+ TTB unbroken (descanso 90s)"},wd:{f:"\"Kelly\" adaptado — 5 rounds for time",m:["400m esteira","30 box jumps 50 cm","30 wall balls (9 kg)"],nt:"Benchmark de endurance e volume. Registre o tempo. Ritmo constante é a única estratégia.",cp:"35'"}},sex:{wu:["5' esteira + airbike leve","10' hip + shoulder mobility completo","5 empty bar snatch progressivo"],sk:{n:"Snatch — 1RM FINAL (PR) + Encerramento",d:"Última sessão do plano. Tente superar o 1RM da semana 11. Celebre cada melhora técnica das últimas 12 semanas.",s:"Build to 1RM  •  Registre e compare semanas 4 → 8 → 12"},wd:{f:"CHIPPER FINAL — Encerramento das 12 Semanas",m:["1000m esteira","50 TTB (particionados como quiser)","40 box jumps 60 cm","30 bar-facing burpees","20 clean & jerk @ 70% 1RM","10 bar muscle-up attempts (ou ring muscle-up)"],nt:"Sem cap na tentativa final de muscle-up. Este chipper representa tudo o que você construiu. Chegue até lá.",cp:"25'"}}},
+};
+
+let cp=1,cw=1,cd='seg';
+
+// Check if dark mode is active
+function isDarkMode() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function renderPH(){
+  const dark = isDarkMode();
+  document.getElementById('ph-row').innerHTML=Object.entries(PH).map(([k,v])=>{
+    const on=+k===cp;
+    const bg = on ? (dark ? v.bgDark : v.bg) : 'transparent';
+    const c = on ? (dark ? v.cDark : v.c) : (dark ? '#888780' : '#B4B2A9');
+    return `<button class="ph-btn" onclick="sph(${k})" style="background:${bg};border-color:${on?c:'transparent'};color:${c}">${v.l}</button>`;
+  }).join('');
+}
+
+function renderWK(){
+  const ph=PH[cp];
+  document.getElementById('wk-row').innerHTML=ph.wks.map(w=>{
+    const isTest=[4,8,12].includes(w);
+    const label=`Sem ${w}${isTest?' 🎯':''}`;
+    return `<button class="wk-btn${w===cw?' act':''}" onclick="sw(${w})">${label}</button>`;
+  }).join('');
+  document.getElementById('focus-bar').textContent=ph.f;
+}
+
+function renderCON(){
+  const s=D[cw][cd];
+  const isTest=[4,8,12].includes(cw);
+  const testBadge=isTest?'<span class="test-badge">Semana de Teste</span>':'';
+
+  const wu=s.wu.map(x=>`<li>${linkifyExercises(x)}</li>`).join('');
+  const wdm=s.wd.m.map(x=>`<li>${linkifyExercises(x)}</li>`).join('');
+  const cap=s.wd.cp?`<span class="chip">cap ${s.wd.cp}</span>`:'';
+  const tip=s.wd.nt?`<div class="tip">${linkifyExercises(s.wd.nt)}</div>`:'';
+
+  document.getElementById('con').innerHTML=`
+    ${isTest?`<div class="test-week-banner">🎯 Semana de Teste — registre todos os resultados para acompanhar sua evolução.</div>`:''}
+
+    <div class="blk">
+      <div class="blk-header">
+        <div class="blk-left"><div class="dot" style="background:var(--warmup-dot)"></div><span class="blk-title">Warm Up</span></div>
+        <span class="chip">8–10 min</span>
+      </div>
+      <ul class="wu-list">${wu}</ul>
+    </div>
+
+    <div class="blk">
+      <div class="blk-header">
+        <div class="blk-left"><div class="dot" style="background:#7F77DD"></div><span class="blk-title">Skill</span></div>
+        <span class="chip">12–15 min</span>
+      </div>
+      <div class="sk-name">${linkifyExercises(s.sk.n)}${testBadge}</div>
+      <div class="sk-desc">${linkifyExercises(s.sk.d)}</div>
+      <div class="sk-sets-box">
+        <div class="sk-sets-label">Prescrição</div>
+        <div class="sk-sets">${linkifyExercises(s.sk.s)}</div>
+      </div>
+    </div>
+
+    <div class="blk">
+      <div class="blk-header">
+        <div class="blk-left"><div class="dot" style="background:var(--wod-dot)"></div><span class="blk-title">WOD</span></div>
+      </div>
+      <div class="wd-format-row">
+        <span class="wchip">${s.wd.f}</span>${cap}
+      </div>
+      <ul class="wd-list">${wdm}</ul>
+      ${tip}
+    </div>`;
+}
+
+function sph(p){cp=p;cw=PH[p].wks[0];renderPH();renderWK();renderCON();window.scrollTo({top:0,behavior:'smooth'});}
+function sw(w){cw=w;renderWK();renderCON();window.scrollTo({top:document.querySelector('.day-tabs').offsetTop-1,behavior:'smooth'});}
+function sd(d){cd=d;['seg','qua','sex'].forEach(x=>{document.getElementById('b-'+x).className='dy-btn'+(x===d?' act':'')});renderCON();window.scrollTo({top:document.querySelector('.content').offsetTop,behavior:'smooth'});}
+
+renderPH();renderWK();renderCON();
+
+// Re-render phase buttons if color scheme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  renderPH();
+});
+</script>
 </body>
 </html>
